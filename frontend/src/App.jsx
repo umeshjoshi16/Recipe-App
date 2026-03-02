@@ -7,10 +7,13 @@ import Login from'./Pages/Login';
 import Register from './Pages/Register';
 import Navbar from'./Pages/Navbar';
 import Dashboard from './Pages/Dashboard';
+import Profile from './Pages/Profile';
+import Logout from './Pages/Logout';
+import Post from './Pages/Post';
 
 export default function App(){
   const location=useLocation();
-  const hideNavbarRoutes = ["/login", "/register","/dashboard"];
+  const hideNavbarRoutes = ["/login", "/register","/dashboard","/profile","/profile/logout","/add-post"];
   const hideNavbar=hideNavbarRoutes.includes(location.pathname);
 
 
@@ -24,6 +27,11 @@ export default function App(){
       <Route path='/login' element={<Login/>}/>
       <Route path='/register' element={<Register/>}/>
       <Route path='/dashboard' element={<Dashboard/>}/>
+      <Route path='/profile' element={<Profile/>}/>
+      <Route path='/add-post' element={<Post/>}/>
+      <Route path='/profile/logout' element={<Logout/>}/>
+
+
 
 
 

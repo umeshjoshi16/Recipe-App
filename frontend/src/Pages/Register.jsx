@@ -1,13 +1,16 @@
 import chefImage from '../assets/chefRegister.png';
+import { useNavigate } from "react-router-dom";
+
 import{useForm} from 'react-hook-form';
 import{yupResolver}from'@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import { NavLink } from 'react-router-dom';
 import { Toaster,toast } from 'react-hot-toast';
+import axios from 'axios';
 
 
 const schema=Yup.object().shape({
-  userName:Yup.string().required('User name is required'),
+  name:Yup.string().required('User name is required'),
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
    confirmPassword: Yup
@@ -18,17 +21,36 @@ const schema=Yup.object().shape({
 })
 
 export default function Register(){
-
-
+const navigate=useNavigate();
+ 
   const {register,handleSubmit,reset,formState:{errors}}=useForm({
     resolver:yupResolver(schema)
   });
 
-const onSubmit = (data) => {
-    console.log("Form data:", data);
-    reset();
-     toast.success("Account Created Successfully!");
-     
+const onSubmit =async (data) => {
+    try{
+          const response=await axios.post('http://localhost:8000/register',
+          data,
+          { withCredentials: true }
+      
+          
+          
+          );
+    
+     toast.success(response.data.message||'Account Created Successfully');
+     reset();
+     navigate('/login');
+    
+
+    
+        }
+        catch(error){
+          toast.error(error.response?.data?.message || "Registration failed");
+          console.log(error);
+    
+        }
+    
+      
   };
 
   return(
@@ -55,8 +77,8 @@ const onSubmit = (data) => {
 
         
         <label className="text-lg">User Name*</label>
-        <input type='text' placeholder='Enter your name' className="w-70 h-10 border border-gray-400 rounded p-1 focus:border-orange-500 focus:border-b-2 outline-none" {...register("userName")}/>
-        {errors.userName && <span className="text-red-500 text-sm mt-1">{errors.userName.message}</span>}
+        <input type='text' placeholder='Enter your name' className="w-70 h-10 border border-gray-400 rounded p-1 focus:border-orange-500 focus:border-b-2 outline-none" {...register("name")}/>
+        {errors.name && <span className="text-red-500 text-sm mt-1">{errors.name.message}</span>}
         </div>
         <div className="flex flex-col">
 

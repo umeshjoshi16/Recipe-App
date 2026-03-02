@@ -4,7 +4,8 @@ import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
-
+import { Toaster,toast } from 'react-hot-toast';
+import axios from 'axios';
 
 const schema=Yup.object().shape({
 email: Yup.string().email("Invalid email").required("Enter your email"),
@@ -12,18 +13,34 @@ email: Yup.string().email("Invalid email").required("Enter your email"),
 })
 
 export default function Login(){
+  
 
   const navigate=useNavigate();
 
 const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   });
-   const onSubmit = (data) => {
-    console.log("Form data:", data);
-    navigate('/dashboard');
+   const onSubmit = async(data) => {
+    try{
+       axios.post('http://localhost:8000/login',
+        {email:data.email,
+        password:data.password
+      },
+        {withCredentials:true}
+      
+      );
+
+     navigate('/dashboard');
+
+    }
+    catch(error){
+       toast.error(error.response?.data?.message || "Login failed");
+
+    }
   };
   return(
     <>
+    <Toaster position="top-center" reverseOrder={false} />
     <div className="min-h-screen flex items-start justify-center  bg-linear-to-b from-orange-50 to-yellow-50 ">
 
     

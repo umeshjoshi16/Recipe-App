@@ -1,5 +1,6 @@
 import User from "../Model/userModel.js";
 import bcrypt from "bcryptjs";
+import generateToken from "../Utils/generateToken.js";
 
 const register = async (req, res) => {
   try {
@@ -68,10 +69,23 @@ const login = async (req, res) => {
         success: false,
       });
     }
+    //GENERATE AND SEND TOKEN IN cookies
+    const token=generateToken(user._id);
+    res.cookie('token',token,{
+      httpOnly:true,
+      secure:false,
+      sameSite:'lax',
+      maxAge:7*24 * 60 * 60 * 1000
+
+    });
 
     res.status(200).json({
       message: "login success",
       success: true,
+      user: {
+        id: user._id,
+        email: user.email,
+      },
     });
   } catch (error) {
     console.error(error.message);
@@ -82,4 +96,26 @@ const login = async (req, res) => {
   }
 };
 
-export { login, register };
+const logout=async(req,res)=>{
+  try{
+    res.clearCookie('token',{
+      httpOnly:true,
+      secure:false,
+      sameSite:'lax',
+    });
+    return res.json({
+      message:"Logged out sucessfully"
+    });
+
+  }
+  catch(error){
+    console.error(error.message);
+    res.status(500).json({
+      message: "Internal Server Error",
+      
+    });
+
+  }
+};
+
+export { login, register,logout };
